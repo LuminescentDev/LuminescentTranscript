@@ -10,9 +10,8 @@
     "build.preview": "vite build --ssr src/entry.preview.tsx",
     "build.types": "tsc --incremental --noEmit",
     "lint": "eslint \"src/**/*.ts*\"",
-    "preview": "qwik build preview && vite preview & node express",
-    "start": "vite --mode ssr & node express",
-    "start:express": "node express",
+    "preview": "qwik build preview && vite preview",
+    "start": "vite --mode ssr",
     "start:vite": "vite --mode ssr",
     "start:vite.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --forcenode --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force",
     "qwik": "qwik"
