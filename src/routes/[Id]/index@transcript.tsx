@@ -16,7 +16,7 @@ export function disable(this: any, disable: string[] = []) {
   list.push({disable: {null: disable}});
 }
 
-export const Markdown = component$<any>(({ mdContent, className }) => (
+export const Markdown = component$<any>(({ mdContent, extraClass }) => (
   <>
     {unified()
       .use(remarkParse)
@@ -33,7 +33,7 @@ export const Markdown = component$<any>(({ mdContent, className }) => (
           const id = emoji[2];
           str = str.replace(match, `<img src="https://cdn.discordapp.com/emojis/${id}.${animated ? 'gif' : 'png'}" class="inline h-5" />`);
         });
-        return <div dangerouslySetInnerHTML={str} class={`whitespace-pre-line [&>p>a]:text-blue-400 [&>p>a]:hover:underline ${className}`} />
+        return <div dangerouslySetInnerHTML={str} class={`whitespace-pre-line [&>p>a]:text-blue-400 [&>p>a]:hover:underline ${extraClass}`} />
       }
     )}
   </>
@@ -215,15 +215,15 @@ export default component$(() => {
               <>
                 {logs.map((log: any, i: number) => {
                   const sameuser = !(!logs[i - 1] || logs[i - 1]?.author.avatar != log.author.avatar);
-                  return (
+                  return <>
                     <div class={`flex ${sameuser ? 'p-1 group' : 'mt-2 ml-2 pt-2 pl-2'} hover:bg-discord-700`}>
                       {!sameuser && <img class="w-10 h-10 mr-5 rounded-full" src={log.author.avatar} alt={log.author.name} />}
                       {sameuser && <p class="w-2 mr-16 text-gray-300 text-sm pl-2 text-center"><span class="hidden group-hover:flex">{log.time.split(' at ')[1].split(' ')[0]}</span></p>}
                       <div>
                         {!sameuser && <h3 class="text-lg font-bold" style={{ color: `#${log.author.color}` }}>{log.author.name} <span class="text-gray-300 font-normal text-sm pl-1">{log.time}</span></h3>}
-                        {log.content && <Markdown mdContent={log.content} className="text-gray-100" /> }
+                        {log.content && <Markdown mdContent={log.content} extraClass="text-gray-100" /> }
                         {log.embeds && log.embeds.map((embed: any) => {
-                          return (
+                          return <>
                             <div class="bg-discord-800 rounded p-4" style={{ borderLeftColor: `#${embed.color}`, borderLeftWidth: '4px' }}>
                               <div class="flex space-x-8">
                                 <div>
@@ -234,14 +234,14 @@ export default component$(() => {
                                     </div>
                                   }
                                   {embed.title && <h3 class="text-white font-bold">{embed.title}</h3>}
-                                  {embed.description && <Markdown mdContent={embed.description} className="text-gray-100" /> }
+                                  {embed.description && <Markdown mdContent={embed.description} extraClass="text-gray-100" /> }
                                   {embed.fields && embed.fields[0] &&
                                     <div class="mt-3">
                                       {embed.fields.map((field: any) => {
                                         return (
                                           <>
-                                            <Markdown mdContent={field.name} className="text-gray-50 font-bold" />
-                                            <Markdown mdContent={field.value} className="text-gray-100" />
+                                            <Markdown mdContent={field.name} extraClass="text-gray-50 font-bold" />
+                                            <Markdown mdContent={field.value} extraClass="text-gray-100" />
                                           </>
                                         )
                                       })}
@@ -262,11 +262,11 @@ export default component$(() => {
                               }
                               
                             </div>
-                          )
+                          </>
                         })}
                       </div>
                     </div>
-                  )
+                  </>
                 })}
               </>
             )
