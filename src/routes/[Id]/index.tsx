@@ -10,17 +10,13 @@ import remarkGfm from 'remark-gfm';
 import remarkRehype from 'remark-rehype';
 import rehypeStringify from 'rehype-stringify';
 
-export function disable(this: any, disable: string[] = []) {
-  const data = this.data();
-  const list = data.micromarkExtensions || (data.micromarkExtensions = []);
-  list.push({disable: {null: disable}});
-}
+import Logo from '~/components/Logo';
+import Icon from '~/components/Icon';
 
 export const Markdown = component$<any>(({ mdContent, extraClass }) => (
   <>
     {unified()
       .use(remarkParse)
-      .use(disable, ['list', 'blockQuote'])
       .use(remarkGfm)
       .use(remarkRehype)
       .use(rehypeStringify)
@@ -54,7 +50,7 @@ export default component$(() => {
           <div class="mx-auto max-w-7xl px-6 lg:px-8">
             <div class="relative flex h-12 items-center">
 
-              <div class="flex md:flex-1 items-center justify-center md:justify-start">
+              <div class="flex flex-1 items-center justify-start">
                 <button type="button" id="mobile-menu-button" onClick$={() => document.getElementById('mobile-menu')?.classList.toggle("hidden")} class="transition duration-200 inline-flex items-center justify-center rounded-full p-2 text-gray-400 hover:text-white focus:outline-none mr-2" aria-controls="mobile-menu" aria-expanded="false">
                   <span class="sr-only">Open main menu</span>
                   <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -81,14 +77,14 @@ export default component$(() => {
                 />
               </div>
               
-              <div class="hidden sm:flex flex-1 items-center justify-end md:justify-center">
+              <div class="flex items-center justify-center">
                 <Resource
                   value={logData}
                   onPending={() => <span class="flex-1 ml-3">Loading...</span>}
                   onRejected={() => <span class="flex-1 ml-3">Error</span>}
                   onResolved={({ guild }) => {
                     return (
-                      <div class="flex space-x-4 font-bold">
+                      <div class="hidden sm:flex space-x-4 font-bold">
                         {guild?.icon && <img class="h-6 w-6 mr-3 rounded-full" src={guild?.icon} alt="Server Icon" />}
                         {guild?.name}
                       </div>
@@ -97,23 +93,15 @@ export default component$(() => {
                 />
               </div>
 
-              <div class="hidden md:flex flex-1 items-center justify-end">
+              <div class="flex flex-1 items-center justify-end">
                 <div class="flex space-x-4">
-                  <Link href="https://cactie.luminescent.dev" class="transition duration-200 group text-gray-300 hover:text-white hover:drop-shadow-2xl hover:px-3 hover:py-2 hover:bg-discord-900 rounded-full text-sm font-medium flex items-center whitespace-nowrap">
-                    <img class="h-6 w-6 group-hover:mr-3 rounded-full" src={`https://cactie.luminescent.dev/assets/images/Cactie.webp`} alt="Cactie Bot" />
-                    <span class="hidden group-hover:flex">Cactie Bot</span>
-                  </Link>
-                  <Link href="https://netherdepths.com" class="transition duration-200 group text-gray-300 hover:text-white hover:drop-shadow-2xl hover:px-3 hover:py-2 hover:bg-discord-900 rounded-full text-sm font-medium flex items-center whitespace-nowrap">
-                    <img class="h-6 w-6 group-hover:mr-3 rounded-full" src={`https://raw.githubusercontent.com/saboooor/Nether-Depths/main/Branding/nd.png`} alt="Nether Depths" />
-                    <span class="hidden group-hover:flex">Nether Depths</span>
-                  </Link>
-                  <Link href="https://simplymc.art" class="transition duration-200 group text-gray-300 hover:text-white hover:drop-shadow-2xl hover:px-3 hover:py-2 hover:bg-discord-900 rounded-full text-sm font-medium flex items-center whitespace-nowrap">
-                    <img class="h-6 w-6 group-hover:mr-3 rounded-full" src={`https://www.simplymc.art/images/icon.png`} alt="SimplyMC" />
-                    <span class="hidden group-hover:flex">SimplyMC</span>
-                  </Link>
-                  <Link href="https://github.com/pemigrade/botflop" class="transition duration-200 group text-gray-300 hover:text-white hover:drop-shadow-2xl hover:px-3 hover:bg-discord-900 hover:py-2 rounded-full text-sm font-medium flex items-center whitespace-nowrap">
-                    <img class="h-6 w-6 group-hover:mr-3 rounded-full" src={`https://i.imgur.com/deE1oID.png`} alt="Botflop" />
-                    <span class="hidden group-hover:flex">Botflop</span>
+                  <Link href="https://luminescent.dev" style="filter: drop-shadow(0 0 0 #DD6CFF);" class="h-8 w-8 sm:w-32 transition text-gray-300 hover:bg-black/20 sm:px-3 py-2 rounded-md flex items-center whitespace-nowrap">
+                    <div class="hidden sm:flex" style="filter: drop-shadow(0 0 1rem #CB6CE6);">
+                      <Logo/>
+                    </div>
+                    <div class="flex sm:hidden" style="filter: drop-shadow(0 0 1rem #CB6CE6);">
+                      <Icon/>
+                    </div>
                   </Link>
                 </div>
               </div>
@@ -180,27 +168,6 @@ export default component$(() => {
                   )
                 }}
               />
-            </div>
-            <div class="md:hidden space-y-1 my-3 py-3 px-3 justify-center items-center bg-discord-900 rounded-2xl">
-              <div class="text-gray-300 px-3 py-2 rounded-xl text-sm font-medium flex items-center whitespace-nowrap">
-                Other Projects
-              </div>
-              <Link href="https://cactie.luminescent.dev" class="text-gray-300 hover:bg-discord-800 hover:text-white hover:drop-shadow-2xl px-3 py-2 rounded-xl text-sm font-medium flex items-center whitespace-nowrap">
-                <img class="h-6 w-6 mr-3 rounded-full" src={`https://cactie.luminescent.dev/assets/images/Cactie.webp`} alt="Cactie Bot" />
-                Cactie Bot
-              </Link>
-              <Link href="https://netherdepths.com" class="text-gray-300 hover:bg-discord-800 hover:text-white hover:drop-shadow-2xl px-3 py-2 rounded-xl text-sm font-medium flex items-center whitespace-nowrap">
-                <img class="h-6 w-6 mr-3 rounded-full" src={`https://raw.githubusercontent.com/saboooor/Nether-Depths/main/Branding/nd.png`} alt="Nether Depths" />
-                Nether Depths
-              </Link>
-              <Link href="https://simplymc.art" class="text-gray-300 hover:bg-discord-800 hover:text-white hover:drop-shadow-2xl px-3 py-2 rounded-xl text-sm font-medium flex items-center whitespace-nowrap">
-                <img class="h-6 w-6 mr-3 rounded-full" src={`https://www.simplymc.art/images/icon.png`} alt="SimplyMC" />
-                SimplyMC
-              </Link>
-              <Link href="https://github.com/pemigrade/botflop" class="text-gray-300 hover:bg-discord-800 hover:text-white hover:drop-shadow-2xl px-3 py-2 rounded-xl text-sm font-medium flex items-center whitespace-nowrap">
-                <img class="h-6 w-6 mr-3 rounded-full" src={`https://i.imgur.com/deE1oID.png`} alt="Botflop" />
-                Botflop
-              </Link>
             </div>
           </div>
         </nav>

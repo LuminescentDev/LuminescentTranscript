@@ -14,7 +14,7 @@ export const RouterHead = component$(() => {
       <meta content={head.title} property="og:title"/>
       <meta content="#0D0D0D" name="theme-color"/>
 
-      <link rel="canonical" href={loc.href} />
+      <link rel="canonical" href={loc.url.href} />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
