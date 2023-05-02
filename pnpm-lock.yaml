@@ -2,17 +2,17 @@ lockfileVersion: '6.0'
 
 devDependencies:
   '@builder.io/qwik':
-    specifier: 0.103.0
-    version: 0.103.0(undici@5.21.0)
+    specifier: 1.0.0
+    version: 1.0.0(undici@5.21.0)
   '@builder.io/qwik-city':
-    specifier: 0.103.0
-    version: 0.103.0(@builder.io/qwik@0.103.0)
+    specifier: 1.0.0
+    version: 1.0.0
   '@types/eslint':
     specifier: 8.37.0
     version: 8.37.0
   '@types/node':
     specifier: latest
-    version: 18.15.12
+    version: 18.16.3
   '@typescript-eslint/eslint-plugin':
     specifier: 5.57.0
     version: 5.57.0(@typescript-eslint/parser@5.57.0)(eslint@8.38.0)(typescript@5.0.4)
@@ -26,8 +26,8 @@ devDependencies:
     specifier: 8.38.0
     version: 8.38.0
   eslint-plugin-qwik:
-    specifier: 0.103.0
-    version: 0.103.0(eslint@8.38.0)
+    specifier: 1.0.0
+    version: 1.0.0(eslint@8.38.0)
   path:
     specifier: ^0.12.7
     version: 0.12.7
@@ -63,7 +63,7 @@ devDependencies:
     version: 10.1.2
   vite:
     specifier: 4.3.0
-    version: 4.3.0(@types/node@18.15.12)
+    version: 4.3.0(@types/node@18.16.3)
   vite-tsconfig-paths:
     specifier: 4.2.0
     version: 4.2.0(typescript@5.0.4)(vite@4.3.0)
@@ -73,15 +73,12 @@ devDependencies:
 
 packages:
 
-  /@builder.io/qwik-city@0.103.0(@builder.io/qwik@0.103.0):
-    resolution: {integrity: sha512-lryB9UrUR+/uOdYqXBIpBmInbK+rDRTzkRdfterNgZlBKR+enWnL4C/C50p4w1zjtl3RRx64hedf6dyn0setmg==}
+  /@builder.io/qwik-city@1.0.0:
+    resolution: {integrity: sha512-nHlDsvYHRWpSmRgg3bb93shn0p1OeMLvBYyIINitGDPxRSK1RyddtJXFAE24MlEEwzetF82xSte3SiC55oPUaQ==}
     engines: {node: '>=16.8.0 <18.0.0 || >=18.11'}
-    peerDependencies:
-      '@builder.io/qwik': '>=0.22.0'
     dependencies:
-      '@builder.io/qwik': 0.103.0(undici@5.21.0)
       '@mdx-js/mdx': 2.3.0
-      '@types/mdx': 2.0.4
+      '@types/mdx': 2.0.5
       source-map: 0.7.4
       vfile: 5.3.7
       zod: 3.21.4
@@ -89,8 +86,8 @@ packages:
       - supports-color
     dev: true
 
-  /@builder.io/qwik@0.103.0(undici@5.21.0):
-    resolution: {integrity: sha512-pBNbOJZpODp9yMCyGnVxWwcNgolH4bx8/AeLcWN7jGhjcrCcQpH8WEV6tjXCGUH/JfSGYjywI4FdYsMRam8wdg==}
+  /@builder.io/qwik@1.0.0(undici@5.21.0):
+    resolution: {integrity: sha512-U1eTIKTBUiW2dbPMCaTzS7K1bMCI9ovtfsvdduwnVThGXRSrX+v2X4U/UmHHPzfOjC55X5wYLc17cw5EwFBVVA==}
     engines: {node: '>=16.8.0 <18.0.0 || >=18.11'}
     hasBin: true
     peerDependencies:
@@ -358,7 +355,7 @@ packages:
     resolution: {integrity: sha512-jLuwRlz8DQfQNiUCJR50Y09CGPq3fLtmtUQfVrj79E0JWu3dvsVcxVIcfhR5h0iXu+/z++zDrYeiJqifRynJkA==}
     dependencies:
       '@types/estree-jsx': 1.0.0
-      '@types/mdx': 2.0.4
+      '@types/mdx': 2.0.5
       estree-util-build-jsx: 2.2.0
       estree-util-is-identifier-name: 2.0.1
       estree-util-to-js: 1.1.0
@@ -444,16 +441,16 @@ packages:
       '@types/unist': 2.0.6
     dev: true
 
-  /@types/mdx@2.0.4:
-    resolution: {integrity: sha512-qCYrNdpKwN6YO6FVnx+ulfqifKlE3lQGsNhvDaW9Oxzyob/cRLBJWow8GHBBD4NxQ7BVvtsATgLsX0vZAWmtrg==}
+  /@types/mdx@2.0.5:
+    resolution: {integrity: sha512-76CqzuD6Q7LC+AtbPqrvD9AqsN0k8bsYo2bM2J8pmNldP1aIPAbzUQ7QbobyXL4eLr1wK5x8FZFe8eF/ubRuBg==}
     dev: true
 
   /@types/ms@0.7.31:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
     dev: true
 
-  /@types/node@18.15.12:
-    resolution: {integrity: sha512-Wha1UwsB3CYdqUm2PPzh/1gujGCNtWVUYF0mB00fJFoR4gTyWTDPjSm+zBF787Ahw8vSGgBja90MkgFwvB86Dg==}
+  /@types/node@18.16.3:
+    resolution: {integrity: sha512-OPs5WnnT1xkCBiuQrZA4+YAV4HEJejmHneyraIaxsbev5yCEr6KMwINNFP9wQeFIw8FWcoTqF3vQsa5CDaI+8Q==}
     dev: true
 
   /@types/parse5@6.0.3:
@@ -1019,8 +1016,8 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /eslint-plugin-qwik@0.103.0(eslint@8.38.0):
-    resolution: {integrity: sha512-mEZ5qfNcpnnufWwmGarIqvopgZlNTdaMF1RQbLLwtW3czx7UEEqbWHgxFwcCWv/xLUg7Gn8WxduM0BmTdbSRew==}
+  /eslint-plugin-qwik@1.0.0(eslint@8.38.0):
+    resolution: {integrity: sha512-IdnMPpVMEkL/QqBEypitdEpKCZWqeu+DSfJi39FGxnCvzsKTAKGv38Ro/+AEfHgYaAV0CH3sxLzxrr05tlG3+g==}
     engines: {node: '>=16'}
     peerDependencies:
       eslint: '>= 8'
@@ -3155,13 +3152,13 @@ packages:
       debug: 4.3.4
       globrex: 0.1.2
       tsconfck: 2.1.1(typescript@5.0.4)
-      vite: 4.3.0(@types/node@18.15.12)
+      vite: 4.3.0(@types/node@18.16.3)
     transitivePeerDependencies:
       - supports-color
       - typescript
     dev: true
 
-  /vite@4.3.0(@types/node@18.15.12):
+  /vite@4.3.0(@types/node@18.16.3):
     resolution: {integrity: sha512-JTGFgDh3dVxeGBpuQX04Up+JZmuG6wu9414Ei36vQzaEruY/M4K0AgwtuB2b4HaBgB7R8l+LHxjB0jcgz4d2qQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -3186,7 +3183,7 @@ packages:
       terser:
         optional: true
     dependencies:
-      '@types/node': 18.15.12
+      '@types/node': 18.16.3
       esbuild: 0.17.12
       postcss: 8.4.21
       rollup: 3.20.6
