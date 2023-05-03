@@ -191,7 +191,7 @@ export default component$(() => {
                         {log.content && <Markdown mdContent={log.content} extraClass="text-gray-100" /> }
                         {log.embeds && log.embeds.map((embed: any) => {
                           return <>
-                            <div class="bg-discord-800 rounded p-4" style={{ borderLeftColor: `#${embed.color}`, borderLeftWidth: '4px' }}>
+                            <div class="bg-discord-800 rounded p-4 max-w-lg" style={{ borderLeftColor: `#${embed.color}`, borderLeftWidth: '4px' }}>
                               <div class="flex space-x-8">
                                 <div>
                                   {embed.author &&
