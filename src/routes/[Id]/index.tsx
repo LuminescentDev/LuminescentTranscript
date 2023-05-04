@@ -1,5 +1,5 @@
 import { Resource, component$ } from '@builder.io/qwik';
-import type { DocumentHead } from '@builder.io/qwik-city';
+import type { DocumentHead, RequestHandler } from '@builder.io/qwik-city';
 import { routeLoader$, Link } from "@builder.io/qwik-city";
 
 import fs from 'fs';
@@ -34,6 +34,15 @@ export const Markdown = component$<any>(({ mdContent, extraClass }) => (
     )}
   </>
 ));
+
+// return raw json if raw query param is set
+export const onGet: RequestHandler = ({ json, query, params }) => {
+  if (query.get('raw')) {
+    const logs = JSON.parse(fs.readFileSync(`./transcript/${params.Id}.json`).toString());
+    console.log(`Transcript ${params.Id} was accessed raw ;)`);
+    throw json(200, logs);
+  }
+};
 
 export const useTranscript = routeLoader$(({ params }) => {
   const logs = JSON.parse(fs.readFileSync(`./transcript/${params.Id}.json`).toString());
@@ -136,7 +145,7 @@ export default component$(() => {
               onResolved={({ time }) => {
                 return (
                   <p class="py-4 font-bold">
-                    Created on {new Date(time).toLocaleString('default', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true })}
+                    Created on {new Date(time).toLocaleString()}
                   </p>
                 )
               }}
@@ -185,9 +194,9 @@ export default component$(() => {
                   return <>
                     <div class={`flex ${sameuser ? 'p-1 group' : 'mt-2 ml-2 pt-2 pl-2'} hover:bg-discord-700`}>
                       {!sameuser && <img class="w-10 h-10 mr-5 rounded-full" src={log.author.avatar} alt={log.author.name} />}
-                      {sameuser && <p class="w-2 mr-16 text-gray-300 text-sm pl-2 text-center"><span class="hidden group-hover:flex">{log.time.split(' at ')[1].split(' ')[0]}</span></p>}
+                      {sameuser && <p class="w-2 mr-16 text-gray-300 text-sm pl-2 text-center"><span class="hidden group-hover:flex">{typeof log.time == 'number' ? new Date(log.time).toLocaleString() : log.time.split(' at ')[1].split(' ')[0]}</span></p>}
                       <div>
-                        {!sameuser && <h3 class="text-lg font-bold" style={{ color: `#${log.author.color}` }}>{log.author.name} <span class="text-gray-300 font-normal text-sm pl-1">{log.time}</span></h3>}
+                        {!sameuser && <h3 class="text-lg font-bold" style={{ color: `#${log.author.color}` }}>{log.author.name} <span class="text-gray-300 font-normal text-sm pl-1">{typeof log.time == 'number' ? new Date(log.time).toLocaleString() : log.time}</span></h3>}
                         {log.content && <Markdown mdContent={log.content} extraClass="text-gray-100" /> }
                         {log.embeds && log.embeds.map((embed: any) => {
                           return <>

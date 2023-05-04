@@ -1,6 +1,11 @@
 {
   "name": "luminescent-transcripts",
+  "version": "3.1.0",
   "description": "A transcript service for Discord",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LuminescentDev/LuminescentTranscript"
+  },
   "engines": {
     "node": ">=15.0.0"
   },
