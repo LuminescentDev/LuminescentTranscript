@@ -1,4 +1,4 @@
-import { Resource, component$ } from '@builder.io/qwik';
+import { Resource, component$, useStore } from '@builder.io/qwik';
 import type { DocumentHead, RequestHandler } from '@builder.io/qwik-city';
 import { routeLoader$, Link } from "@builder.io/qwik-city";
 
@@ -52,6 +52,16 @@ export const useTranscript = routeLoader$(({ params }) => {
 
 export default component$(() => {
   const logData = useTranscript();
+
+  const store: {
+    notifications: {
+      title: string;
+      content: string;
+    }[];
+  } = useStore({
+    notifications: [],
+  });
+
   return (
     <>
       <header>
@@ -79,7 +89,7 @@ export default component$(() => {
                   onResolved={({ channel }) => {
                     return (
                       <span class="ml-3 font-bold text-gray-100">
-                        {channel ?? 'Unknown Channel'}
+                        {typeof channel == 'string' ? channel : channel.name}
                       </span>
                     )
                   }}
@@ -123,81 +133,43 @@ export default component$(() => {
               value={logData}
               onPending={() => <span class="flex-1 ml-3">Loading...</span>}
               onRejected={() => <span class="flex-1 ml-3">Error</span>}
-              onResolved={({ guild }) => {
+              onResolved={({ guild, time }) => {
                 return (
-                  <>
+                  <div class="space-y-1 my-3 py-4 px-6 justify-center items-center bg-discord-900 rounded-lg">
                     {guild?.name &&
-                      <div class="sm:hidden space-y-1 my-3 py-5 px-6 justify-center items-center bg-discord-900 rounded-2xl">
-                        <div class="flex space-x-4 font-bold">
-                          {guild?.icon && <img class="h-6 w-6 mr-3 rounded-full" src={guild?.icon} alt="Server Icon" />}
-                          {guild?.name}
-                        </div>
+                      <div class="flex sm:hidden space-x-4 font-bold">
+                        {guild?.icon && <img class="h-6 w-6 mr-3 rounded-full" src={guild?.icon} alt="Server Icon" />}
+                        {guild?.name}
                       </div>
                     }
-                  </>
+                    <p class="font-semibold">
+                      Created on {new Date(time).toLocaleString()}
+                    </p>
+                  </div>
                 )
               }}
             />
-            <Resource
-              value={logData}
-              onPending={() => <span class="flex-1 ml-3">Loading...</span>}
-              onRejected={() => <span class="flex-1 ml-3">Error</span>}
-              onResolved={({ time }) => {
-                return (
-                  <p class="py-4 font-bold">
-                    Created on {new Date(time).toLocaleString()}
-                  </p>
-                )
-              }}
-            />
-            <p class="text-gray-300">
-              Users with access to this transcript
-            </p>
-            <div class="space-y-1 my-3 justify-center items-center bg-discord-900 rounded-2xl">
-
-              <Resource
-                value={logData}
-                onPending={() => <div class="text-gray-300 bg-discord-800 px-3 py-2 rounded-xl text-sm font-medium flex items-center whitespace-nowrap">Loading...</div>}
-                onRejected={() => <div class="text-gray-300 bg-discord-800 px-3 py-2 rounded-xl text-sm font-medium flex items-center whitespace-nowrap">An error occurred while trying to get this data.</div>}
-                onResolved={({ users }) => {
-                  return (
-                    <>
-                      {users &&
-                        <div class="text-gray-300 bg-discord-800 px-4 py-3 rounded-lg text-sm font-medium flex items-center whitespace-nowrap">
-                          <img class="h-6 w-6 mr-3 rounded-full" src={`https://cactie.luminescent.dev/assets/images/Cactie.webp`} alt="Cactie Bot" />
-                          Cactie
-                        </div>
-                      }
-                      {!users &&
-                        <div class="text-gray-300 bg-discord-800 px-4 py-3 rounded-lg text-sm font-medium flex items-center whitespace-nowrap">
-                          Anyone with the link
-                        </div>
-                      }
-                    </>
-                  )
-                }}
-              />
-            </div>
           </div>
         </nav>
       </header>
       <section class="mx-auto max-w-7xl px-6 py-2" style={{ minHeight: 'calc(100dvh - 64px)' }}>
         <Resource
           value={logData}
-          onPending={() => <div class="text-gray-300 bg-discord-800 px-3 py-2 rounded-xl text-sm font-medium flex items-center whitespace-nowrap">Loading...</div>}
-          onRejected={() => <div class="text-gray-300 bg-discord-800 px-3 py-2 rounded-xl text-sm font-medium flex items-center whitespace-nowrap">An error occurred while trying to get this data.</div>}
-          onResolved={({ logs }) => {
+          onPending={() => <div class="text-gray-300 bg-discord-700 px-3 py-2 rounded-xl text-sm font-medium flex items-center whitespace-nowrap">Loading...</div>}
+          onRejected={() => <div class="text-gray-300 bg-discord-700 px-3 py-2 rounded-xl text-sm font-medium flex items-center whitespace-nowrap">An error occurred while trying to get this data.</div>}
+          onResolved={({ guild, channel, logs }) => {
             return (
               <>
                 {logs.map((log: any, i: number) => {
                   const sameuser = !(!logs[i - 1] || logs[i - 1]?.author.avatar != log.author.avatar);
                   return <>
-                    <div class={`flex ${sameuser ? 'p-1 group' : 'mt-2 ml-2 pt-2 pl-2'} hover:bg-discord-700`}>
+                    <span id={log.id} class="pointer-events-none block h-12 -mt-12" />
+                    <div class={`flex ${sameuser ? 'p-1' : 'mt-2 ml-2 pt-2 pl-2'} group hover:bg-discord-700`}>
                       {!sameuser && <img class="w-10 h-10 mr-5 rounded-full" src={log.author.avatar} alt={log.author.name} />}
-                      {sameuser && <p class="w-2 mr-16 text-gray-300 text-sm pl-2 text-center"><span class="hidden group-hover:flex">{typeof log.time == 'number' ? new Date(log.time).toLocaleString() : log.time.split(' at ')[1].split(' ')[0]}</span></p>}
+                      {sameuser && <p class="w-2 mr-16 text-gray-300 text-sm pl-2 text-center"><span class="hidden group-hover:flex">{typeof log.time == 'number' ? new Date(log.time).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false }) : log.time.split(' at ')[1].split(' ')[0]}</span></p>}
                       <div>
-                        {!sameuser && <h3 class="text-lg font-bold" style={{ color: `#${log.author.color}` }}>{log.author.name} <span class="text-gray-300 font-normal text-sm pl-1">{typeof log.time == 'number' ? new Date(log.time).toLocaleString() : log.time}</span></h3>}
-                        {log.content && <Markdown mdContent={log.content} extraClass="text-gray-100" /> }
+                        {!sameuser && <h3 class="text-lg font-bold" style={{ color: log.author.color }}>{log.author.name} <span class="text-gray-300 font-normal text-sm pl-1">{typeof log.time == 'number' ? new Date(log.time).toLocaleString() : log.time}</span></h3>}
+                        {(log.content || log.attachments) && <Markdown mdContent={`${log.content}${log.attachments ? `\n${log.attachments.map((attachment: any) => `![Attachment](${attachment.url})`).join(' ')}` : ''}`} extraClass="text-gray-100" /> }
                         {log.embeds && log.embeds.map((embed: any) => {
                           return <>
                             <div class="bg-discord-800 rounded p-4 max-w-lg" style={{ borderLeftColor: `#${embed.color}`, borderLeftWidth: '4px' }}>
@@ -240,6 +212,49 @@ export default component$(() => {
                             </div>
                           </>
                         })}
+                        { log.reactions &&
+                          <div class="flex flex-wrap gap-1 mt-2">
+                            { log.reactions.map((reaction: { name: string, count: number }, i: number) => (
+                              <div key={i} class="flex items-center gap-2 bg-discord-800 px-2 py-1 rounded-lg">
+                                <Markdown mdContent={reaction.name} />
+                                <p>{reaction.count}</p>
+                              </div>
+                            )) }
+                          </div> 
+                        }
+                      </div>
+                      <div class="hidden group-hover:flex flex-1 h-full justify-end">
+                        <div class="flex bg-discord-800 shadow-md rounded-lg">
+                          <button class="hover:bg-discord-400 p-2 rounded-lg cursor-pointer" onClick$={() => {
+                            navigator.clipboard.writeText(window.location.href + '#' + log.id);
+                            const element = document.getElementById(log.id);
+                            if (element) element.scrollIntoView({ behavior: 'smooth' });
+                            store.notifications.push({
+                              title: 'Copied Successfully!',
+                              content: 'The link to this message has been copied to your clipboard.',
+                            });
+                            setTimeout(() => {
+                              store.notifications.shift();
+                            }, 5000);
+                          }}>
+                            <svg class="icon-3XHs8t" aria-hidden="true" role="img" width="24" height="24" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path fill="currentColor" d="M10.59 13.41c.41.39.41 1.03 0 1.42-.39.39-1.03.39-1.42 0a5.003 5.003 0 0 1 0-7.07l3.54-3.54a5.003 5.003 0 0 1 7.07 0 5.003 5.003 0 0 1 0 7.07l-1.49 1.49c.01-.82-.12-1.64-.4-2.42l.47-.48a2.982 2.982 0 0 0 0-4.24 2.982 2.982 0 0 0-4.24 0l-3.53 3.53a2.982 2.982 0 0 0 0 4.24zm2.82-4.24c.39-.39 1.03-.39 1.42 0a5.003 5.003 0 0 1 0 7.07l-3.54 3.54a5.003 5.003 0 0 1-7.07 0 5.003 5.003 0 0 1 0-7.07l1.49-1.49c-.01.82.12 1.64.4 2.43l-.47.47a2.982 2.982 0 0 0 0 4.24 2.982 2.982 0 0 0 4.24 0l3.53-3.53a2.982 2.982 0 0 0 0-4.24.973.973 0 0 1 0-1.42z"></path><rect width="24" height="24"></rect></g></svg>
+                          </button>
+                          <button class="hover:bg-discord-400 p-2 rounded-lg cursor-pointer" onClick$={() => {
+                            navigator.clipboard.writeText(log.id);
+                            store.notifications.push({
+                              title: 'Copied Successfully!',
+                              content: `The message Id ${log.id} has been copied to your clipboard.`,
+                            });
+                            setTimeout(() => {
+                              store.notifications.shift();
+                            }, 5000);
+                          }}>
+                            <svg class="icon-3XHs8t" aria-hidden="true" role="img" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M3.37868 2.87868C3.94129 2.31607 4.70435 2 5.5 2H19.5C20.2956 2 21.0587 2.31607 21.6213 2.87868C22.1839 3.44129 22.5 4.20435 22.5 5V19C22.5 19.7956 22.1839 20.5587 21.6213 21.1213C21.0587 21.6839 20.2956 22 19.5 22H5.5C4.70435 22 3.94129 21.6839 3.37868 21.1213C2.81607 20.5587 2.5 19.7956 2.5 19V5C2.5 4.20435 2.81607 3.44129 3.37868 2.87868ZM7.65332 16.3125H9.47832V7.6875H7.65332V16.3125ZM11.23 7.6875V16.3125H14.2925C15.6008 16.3125 16.6091 15.9417 17.3175 15.2C18.0341 14.4583 18.3925 13.3917 18.3925 12C18.3925 10.6083 18.0341 9.54167 17.3175 8.8C16.6091 8.05833 15.6008 7.6875 14.2925 7.6875H11.23ZM15.955 14.0625C15.5466 14.4625 14.9925 14.6625 14.2925 14.6625H13.055V9.3375H14.2925C14.9925 9.3375 15.5466 9.5375 15.955 9.9375C16.3633 10.3375 16.5675 11.025 16.5675 12C16.5675 12.975 16.3633 13.6625 15.955 14.0625Z"></path></svg>
+                          </button>
+                          <a href={`https://discord.com/channels/${guild?.id}/${channel.id}/${log.id}`} class="hover:bg-discord-400 p-2 rounded-lg cursor-pointer">
+                            <svg class="launchIcon-2KvOPN" aria-hidden="true" role="img" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M10 5V3H5.375C4.06519 3 3 4.06519 3 5.375V18.625C3 19.936 4.06519 21 5.375 21H18.625C19.936 21 21 19.936 21 18.625V14H19V19H5V5H10Z"></path><path fill="currentColor" d="M21 2.99902H14V4.99902H17.586L9.29297 13.292L10.707 14.706L19 6.41302V9.99902H21V2.99902Z"></path></svg>
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </>
@@ -248,6 +263,18 @@ export default component$(() => {
             )
           }}
         />
+        { store.notifications.length &&
+          <div class="fixed block bottom-4 right-4 px-4 py-3 rounded-lg bg-green-500/50 backdrop-blur-xl">
+            {
+              store.notifications.map((notification, i) => (
+                <div key={i}>
+                  <p class="font-bold text-white text-2xl">{notification.title}</p>
+                  <p class="font-normal text-gray-100 text-lg">{notification.content}</p>
+                </div>
+              ))
+            }
+          </div>
+        }
       </section>
     </>
   );
@@ -256,7 +283,7 @@ export default component$(() => {
 export const head: DocumentHead = ({ resolveValue }) => {
   const { channel, logs, time } = resolveValue(useTranscript);
   return {
-      title: `Transcript of # ${channel}`,
+      title: `Transcript of # ${typeof channel == 'string' ? channel : channel.name}`,
       meta: [
           {
               name: 'description',
