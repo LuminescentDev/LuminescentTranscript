@@ -1,3 +1,4 @@
+import { RequestHandler } from '@builder.io/qwik-city';
 import { PrismaClient } from '@prisma/client/edge';
 const generateRandomString = () => {
     const array = new Uint8Array(10);
@@ -7,8 +8,14 @@ const generateRandomString = () => {
         .join('');
 };
 
-export const onPost: any = async ({ text, request }: any) => {
-    const prismaclient = new PrismaClient();
+export const onPost: RequestHandler = async ({ text, request, env }) => {
+    const prismaclient = new PrismaClient({
+        datasources: {
+            db: {
+                url: env.get('DATABASE_URL'),
+            },
+        },
+    });
     const url = generateRandomString();
     const data = await request.json();
 
@@ -24,13 +31,13 @@ export const onPost: any = async ({ text, request }: any) => {
     }
     catch (e) {
         console.log(e);
-        text(500, e);
+        text(500, `${e}`);
         return;
     }
     
     text(200, `https://transcript.luminescent.dev/${url}`);
 };
 
-export const onGet: any = async ({ redirect }: any) => {
+export const onGet: RequestHandler = async ({ redirect }: any) => {
     throw redirect(302, 'https://luminescent.dev')
 };

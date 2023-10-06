@@ -12,8 +12,9 @@ import Logo from '~/components/Logo';
 import Icon from '~/components/Icon';
 
 import { PrismaClient } from '@prisma/client/edge';
+import { withAccelerate } from '@prisma/extension-accelerate'
 
-export const Markdown = component$<any>(({ mdContent, extraClass }: any) => (
+export const Markdown = component$(({ mdContent, extraClass }: any) => (
   <>
     {unified()
       .use(remarkParse)
@@ -36,12 +37,21 @@ export const Markdown = component$<any>(({ mdContent, extraClass }: any) => (
 ));
 
 // return raw json if raw query param is set
-export const onGet: RequestHandler = async ({ json, query, params }) => {
+export const onGet: RequestHandler = async ({ json, query, params, env }) => {
   if (query.get('raw')) {
-    const prisma = new PrismaClient();
+    const prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: env.get('DATABASE_URL'),
+        },
+      },
+    }).$extends(withAccelerate());
     const data = await prisma.transcripts.findUnique({
       where: {
         id: params.Id,
+      },
+      cacheStrategy: {
+        ttl: 60
       },
     });
     console.log(`Transcript ${params.Id} was accessed raw ;)`);
@@ -49,11 +59,20 @@ export const onGet: RequestHandler = async ({ json, query, params }) => {
   }
 };
 
-export const useTranscript = routeLoader$(async ({ params }) => {
-  const prisma = new PrismaClient();
+export const useTranscript = routeLoader$(async ({ params, env }) => {
+  const prisma = new PrismaClient({
+    datasources: {
+      db: {
+        url: env.get('DATABASE_URL'),
+      },
+    },
+  }).$extends(withAccelerate());
   const data = await prisma.transcripts.findUnique({
     where: {
       id: params.Id,
+    },
+    cacheStrategy: {
+      ttl: 60
     },
   });
   if (!data) throw new Error('Transcript not found');
