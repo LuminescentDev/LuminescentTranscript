@@ -42,3 +42,6 @@ data/
 /files/
 .DS_Store
 package-lock.json
+
+# Cloudflare
+functions/**/*.js
