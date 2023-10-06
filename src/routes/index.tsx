@@ -1,11 +1,15 @@
-import crypto from 'crypto';
-function suffix() { return crypto.randomBytes(5).toString('hex'); }
-
 import { PrismaClient } from '@prisma/client/edge';
+const generateRandomString = (length = 8) => {
+    const array = new Uint8Array(10);
+    crypto.getRandomValues(array);
+    return Array.from(array)
+        .map((byte) => byte.toString(16).padStart(2, '0'))
+        .join('');
+};
 
 export const onPost: any = async ({ text, request }: any) => {
     const prismaclient = new PrismaClient();
-    const url = suffix();
+    const url = generateRandomString();
     const data = await request.json();
 
     try {
