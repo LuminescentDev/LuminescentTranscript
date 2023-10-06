@@ -243,7 +243,7 @@ export default component$(() => {
             </div>
           </>
         })}
-        { store.notifications.length &&
+        { !!store.notifications.length &&
           <div class="fixed block bottom-4 right-4 px-4 py-3 rounded-lg bg-green-500/50 backdrop-blur-xl">
             {
               store.notifications.map((notification, i) => (
