@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client/edge';
-const generateRandomString = (length = 8) => {
+const generateRandomString = () => {
     const array = new Uint8Array(10);
     crypto.getRandomValues(array);
     return Array.from(array)
