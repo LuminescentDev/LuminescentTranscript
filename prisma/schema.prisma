@@ -1,0 +1,16 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Transcripts {
+  id        String   @id
+  createdAt DateTime @default(now())
+  guild     String
+  channel   String
+  messages  String   @db.LongText
+}

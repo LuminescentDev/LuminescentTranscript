@@ -37,10 +37,8 @@ lerna-debug.log*
 .yarn/*
 !.yarn/releases
 
-config/
 data/
-/transcript/
+.env
 /files/
 .DS_Store
 package-lock.json
-config.json

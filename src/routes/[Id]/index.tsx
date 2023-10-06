@@ -2,8 +2,6 @@ import { component$, useStore } from '@builder.io/qwik';
 import type { DocumentHead, RequestHandler } from '@builder.io/qwik-city';
 import { routeLoader$, Link } from "@builder.io/qwik-city";
 
-import fs from 'fs';
-
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
@@ -13,7 +11,9 @@ import rehypeStringify from 'rehype-stringify';
 import Logo from '~/components/Logo';
 import Icon from '~/components/Icon';
 
-export const Markdown = component$<any>(({ mdContent, extraClass }) => (
+import { PrismaClient } from '@prisma/client/edge';
+
+export const Markdown = component$<any>(({ mdContent, extraClass }: any) => (
   <>
     {unified()
       .use(remarkParse)
@@ -36,23 +36,40 @@ export const Markdown = component$<any>(({ mdContent, extraClass }) => (
 ));
 
 // return raw json if raw query param is set
-export const onGet: RequestHandler = ({ json, query, params }) => {
+export const onGet: RequestHandler = async ({ json, query, params }) => {
   if (query.get('raw')) {
-    const logs = JSON.parse(fs.readFileSync(`./transcript/${params.Id}.json`).toString());
+    const prisma = new PrismaClient();
+    const data = await prisma.transcripts.findUnique({
+      where: {
+        id: params.Id,
+      },
+    });
     console.log(`Transcript ${params.Id} was accessed raw ;)`);
-    throw json(200, logs);
+    throw json(200, data);
   }
 };
 
-export const useTranscript = routeLoader$(({ params }) => {
-  const logs = JSON.parse(fs.readFileSync(`./transcript/${params.Id}.json`).toString());
+export const useTranscript = routeLoader$(async ({ params }) => {
+  const prisma = new PrismaClient();
+  const data = await prisma.transcripts.findUnique({
+    where: {
+      id: params.Id,
+    },
+  });
+  if (!data) throw new Error('Transcript not found');
+
   console.log(`Transcript ${params.Id} was accessed`);
-  return logs;
+  return { 
+    guild: JSON.parse(data.guild),
+    channel: JSON.parse(data.channel),
+    logs: JSON.parse(data.messages),
+    time: data.createdAt,
+  };
 });
 
 export default component$(() => {
   const logData = useTranscript();
-  const { channel, guild, time, logs } = logData.value;
+  const { guild, channel, logs, time } = logData.value;
 
   const store: {
     notifications: {
@@ -84,14 +101,14 @@ export default component$(() => {
                   <path fill="rgb(255, 255, 255, 0.3)" d="M5.88657 21C5.57547 21 5.3399 20.7189 5.39427 20.4126L6.00001 17H2.59511C2.28449 17 2.04905 16.7198 2.10259 16.4138L2.27759 15.4138C2.31946 15.1746 2.52722 15 2.77011 15H6.35001L7.41001 9H4.00511C3.69449 9 3.45905 8.71977 3.51259 8.41381L3.68759 7.41381C3.72946 7.17456 3.93722 7 4.18011 7H7.76001L8.39677 3.41262C8.43914 3.17391 8.64664 3 8.88907 3H9.87344C10.1845 3 10.4201 3.28107 10.3657 3.58738L9.76001 7H15.76L16.3968 3.41262C16.4391 3.17391 16.6466 3 16.8891 3H17.8734C18.1845 3 18.4201 3.28107 18.3657 3.58738L17.76 7H21.1649C21.4755 7 21.711 7.28023 21.6574 7.58619L21.4824 8.58619C21.4406 8.82544 21.2328 9 20.9899 9H17.41L16.35 15H19.7549C20.0655 15 20.301 15.2802 20.2474 15.5862L20.0724 16.5862C20.0306 16.8254 19.8228 17 19.5799 17H16L15.3632 20.5874C15.3209 20.8261 15.1134 21 14.8709 21H13.8866C13.5755 21 13.3399 20.7189 13.3943 20.4126L14 17H8.00001L7.36325 20.5874C7.32088 20.8261 7.11337 21 6.87094 21H5.88657ZM9.41045 9L8.35045 15H14.3504L15.4104 9H9.41045Z"></path>
                 </svg>
                 <span class="ml-3 font-bold text-gray-100">
-                  {typeof channel == 'string' ? channel : channel.name}
+                  {channel.name}
                 </span>
               </div>
               
               <div class="flex items-center justify-center">
                   <div class="hidden sm:flex space-x-4 font-bold">
-                    {guild?.icon && <img class="h-6 w-6 mr-3 rounded-full" src={guild?.icon} alt="Server Icon" />}
-                    {guild?.name}
+                    {guild.icon && <img width={24} height={24} class="h-6 w-6 mr-3 rounded-full" src={guild.icon} alt="Server Icon" />}
+                    {guild.name}
                   </div>
               </div>
 
@@ -113,10 +130,10 @@ export default component$(() => {
 
           <div class="hidden px-6 py-2 mx-auto max-w-2xl" id="mobile-menu">
             <div class="space-y-1 my-3 py-4 px-6 justify-center items-center bg-discord-900 rounded-lg">
-              {guild?.name &&
+              {guild.name &&
                 <div class="flex sm:hidden space-x-4 font-bold">
-                  {guild?.icon && <img class="h-6 w-6 mr-3 rounded-full" src={guild?.icon} alt="Server Icon" />}
-                  {guild?.name}
+                  {guild.icon && <img width={24} height={24} class="h-6 w-6 mr-3 rounded-full" src={guild.icon} alt="Server Icon" />}
+                  {guild.name}
                 </div>
               }
               <p class="font-semibold">
@@ -132,7 +149,7 @@ export default component$(() => {
           return <>
             <span id={log.id} class="pointer-events-none block h-12 -mt-12" />
             <div class={`flex ${sameuser ? 'p-1' : 'mt-2 ml-2 pt-2 pl-2'} group hover:bg-discord-700`}>
-              {!sameuser && <img class="w-10 h-10 mr-5 rounded-full" src={log.author.avatar} alt={log.author.name} />}
+              {!sameuser && <img width={40} height={40} class="w-10 h-10 mr-5 rounded-full" src={log.author.avatar} alt={log.author.name} />}
               {sameuser && <p class="w-2 mr-16 text-gray-300 text-sm pl-2 text-center"><span class="hidden group-hover:flex">{typeof log.time == 'number' ? new Date(log.time).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false }) : log.time.split(' at ')[1].split(' ')[0]}</span></p>}
               <div>
                 {!sameuser && <h3 class="text-lg font-bold" style={{ color: log.author.color }}>{log.author.name} <span class="text-gray-300 font-normal text-sm pl-1">{typeof log.time == 'number' ? new Date(log.time).toLocaleString() : log.time}</span></h3>}
@@ -144,7 +161,7 @@ export default component$(() => {
                         <div>
                           {embed.author &&
                             <div class="flex items-center mb-3">
-                              {embed.author?.iconURL && <img src={embed.author?.iconURL} class="w-8 h-8 rounded-full mr-2" alt="Avatar"/>}
+                              {embed.author?.iconURL && <img src={embed.author?.iconURL} width={32} height={32} class="w-8 h-8 rounded-full mr-2" alt="Avatar"/>}
                               {embed.author?.name && <p class="text-gray-300 text-sm font-bold">{embed.author?.name}</p>}
                             </div>
                           }
@@ -165,11 +182,11 @@ export default component$(() => {
                         </div>
                         {embed.thumb && 
                           <div>
-                            <img src={embed.thumb} class="rounded float-right" alt="Thumbnail"/>
+                            <img width={50} height={50} src={embed.thumb} class="rounded float-right" alt="Thumbnail"/>
                           </div>
                         }
                       </div>
-                      {embed.image && <img src={embed.image} class="w-full rounded mt-3" alt="Attachment"/>}
+                      {embed.image && <img width={512} height={512} src={embed.image} class="w-full rounded mt-3" alt="Attachment"/>}
                       {embed.footer && 
                         <div class="flex items-center mt-3">
                           <p class="text-gray-500 text-xs">{embed.footer}</p>
@@ -218,7 +235,7 @@ export default component$(() => {
                   }}>
                     <svg class="icon-3XHs8t" aria-hidden="true" role="img" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M3.37868 2.87868C3.94129 2.31607 4.70435 2 5.5 2H19.5C20.2956 2 21.0587 2.31607 21.6213 2.87868C22.1839 3.44129 22.5 4.20435 22.5 5V19C22.5 19.7956 22.1839 20.5587 21.6213 21.1213C21.0587 21.6839 20.2956 22 19.5 22H5.5C4.70435 22 3.94129 21.6839 3.37868 21.1213C2.81607 20.5587 2.5 19.7956 2.5 19V5C2.5 4.20435 2.81607 3.44129 3.37868 2.87868ZM7.65332 16.3125H9.47832V7.6875H7.65332V16.3125ZM11.23 7.6875V16.3125H14.2925C15.6008 16.3125 16.6091 15.9417 17.3175 15.2C18.0341 14.4583 18.3925 13.3917 18.3925 12C18.3925 10.6083 18.0341 9.54167 17.3175 8.8C16.6091 8.05833 15.6008 7.6875 14.2925 7.6875H11.23ZM15.955 14.0625C15.5466 14.4625 14.9925 14.6625 14.2925 14.6625H13.055V9.3375H14.2925C14.9925 9.3375 15.5466 9.5375 15.955 9.9375C16.3633 10.3375 16.5675 11.025 16.5675 12C16.5675 12.975 16.3633 13.6625 15.955 14.0625Z"></path></svg>
                   </button>
-                  <a href={`https://discord.com/channels/${guild?.id}/${channel.id}/${log.id}`} class="hover:bg-discord-400 p-2 rounded-lg cursor-pointer">
+                  <a href={`https://discord.com/channels/${guild.id}/${channel.id}/${log.id}`} class="hover:bg-discord-400 p-2 rounded-lg cursor-pointer">
                     <svg class="launchIcon-2KvOPN" aria-hidden="true" role="img" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M10 5V3H5.375C4.06519 3 3 4.06519 3 5.375V18.625C3 19.936 4.06519 21 5.375 21H18.625C19.936 21 21 19.936 21 18.625V14H19V19H5V5H10Z"></path><path fill="currentColor" d="M21 2.99902H14V4.99902H17.586L9.29297 13.292L10.707 14.706L19 6.41302V9.99902H21V2.99902Z"></path></svg>
                   </a>
                 </div>
@@ -246,7 +263,7 @@ export default component$(() => {
 export const head: DocumentHead = ({ resolveValue }) => {
   const { channel, logs, time } = resolveValue(useTranscript);
   return {
-      title: `Transcript of # ${typeof channel == 'string' ? channel : channel.name}`,
+      title: `Transcript of # ${channel.name}`,
       meta: [
           {
               name: 'description',
