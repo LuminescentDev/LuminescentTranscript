@@ -177,13 +177,13 @@ export default component$(() => {
             <div class="group">
               <div class={`flex ${sameuser ? 'p-1' : 'mt-2 ml-2 pt-2 pl-2'} group-hover:bg-discord-700`}>
                 {!sameuser && <img width={40} height={40} class="w-10 h-10 mr-5 rounded-full" src={log.author.avatar} alt={log.author.name} />}
-                {sameuser && <p class="w-16 mx-1 text-gray-300 p-1 text-xs text-center">
+                {sameuser && <p class="min-w-[64px] mx-1 text-gray-300 p-1 text-xs text-center">
                   <span class="hidden group-hover:flex">
                     {new Date(log.time).toLocaleString('en-US', { timeZone: store.timezone, hour: 'numeric', minute: 'numeric' })}
                   </span>
                 </p>}
                 <div>
-                  {!sameuser && <h3 class="text-lg" style={{ color: log.author.color }}>{log.author.name} <span class="text-gray-300 font-normal text-sm pl-1">{new Date(log.time).toLocaleString('default', { timeZone: store.timezone })}</span></h3>}
+                  {!sameuser && <h3 class="font-medium" style={{ color: log.author.color }}>{log.author.name} <span class="text-gray-300 font-normal text-sm pl-1">{new Date(log.time).toLocaleString('default', { timeZone: store.timezone })}</span></h3>}
                   {(log.content || log.attachments) && <Markdown mdContent={`${log.content}${log.attachments ? `\n${log.attachments.map((attachment: any) => `![Attachment](${attachment.url})`).join(' ')}` : ''}`} extraClass="text-gray-100" /> }
                   {log.embeds && log.embeds.map((embed: any) => {
                     return <>
