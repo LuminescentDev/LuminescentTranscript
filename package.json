@@ -31,7 +31,7 @@
   "devDependencies": {
     "@builder.io/qwik": "1.2.13",
     "@builder.io/qwik-city": "1.2.13",
-    "@prisma/client": "5.4.1",
+    "@prisma/client": "5.21.1",
     "@prisma/extension-accelerate": "^0.6.2",
     "@types/eslint": "8.44.3",
     "@types/node": "latest",
