@@ -12,11 +12,11 @@ devDependencies:
     specifier: 1.2.13
     version: 1.2.13
   '@prisma/client':
-    specifier: 5.4.1
-    version: 5.4.1(prisma@5.4.1)
+    specifier: 7.10.0
+    version: 7.10.0(prisma@5.4.1)(typescript@5.2.2)
   '@prisma/extension-accelerate':
     specifier: ^0.6.2
-    version: 0.6.2(@prisma/client@5.4.1)
+    version: 0.6.2(@prisma/client@7.10.0)
   '@types/eslint':
     specifier: 8.44.3
     version: 8.44.3
@@ -734,22 +734,25 @@ packages:
       fastq: 1.14.0
     dev: true
 
-  /@prisma/client@5.4.1(prisma@5.4.1):
-    resolution: {integrity: sha512-xyD0DJ3gRNfLbPsC+YfMBBuLJtZKQfy1OD2qU/PZg+HKrr7SO+09174LMeTlWP0YF2wca9LxtVd4HnAiB5ketQ==}
-    engines: {node: '>=16.13'}
-    requiresBuild: true
+  /@prisma/client-runtime-utils@7.10.0:
+    resolution: {integrity: sha512-cnCy7lUV8/CctgKVEmqAbSLAmwqJdE/qAlqTBk/0NDk59zEb2cZ0M0M0E4vVPnqbSEYudRroQDvOWfUZH6RIfw==}
+    dev: true
+
+  /@prisma/client@7.10.0(prisma@5.4.1)(typescript@5.2.2):
+    resolution: {integrity: sha512-Ubw/QS9JGIBSBUsyxAUQuK/Jcu0Tsva7le7QbLd91Kix9yJvYDdj5QkwgEbbZniH80dd+sziQcALPc+HnvQC8Q==}
+    engines: {node: ^20.19 || ^22.12 || >=24.0}
     peerDependencies:
       prisma: '*'
+      typescript: '>=5.4.0'
     peerDependenciesMeta:
       prisma:
         optional: true
+      typescript:
+        optional: true
     dependencies:
-      '@prisma/engines-version': 5.4.1-1.2f302df92bd8945e20ad4595a73def5b96afa54f
+      '@prisma/client-runtime-utils': 7.10.0
       prisma: 5.4.1
-    dev: true
-
-  /@prisma/engines-version@5.4.1-1.2f302df92bd8945e20ad4595a73def5b96afa54f:
-    resolution: {integrity: sha512-+nUQM/y8C+1GG5Ioeqcu6itFslCfxvQSAUVSMC9XM2G2Fcq0F4Afnp6m0pXF6X6iUBWen7jZBPmM9Qlq4Nr3/A==}
+      typescript: 5.2.2
     dev: true
 
   /@prisma/engines@5.4.1:
@@ -757,13 +760,13 @@ packages:
     requiresBuild: true
     dev: true
 
-  /@prisma/extension-accelerate@0.6.2(@prisma/client@5.4.1):
+  /@prisma/extension-accelerate@0.6.2(@prisma/client@7.10.0):
     resolution: {integrity: sha512-KIBVPeWt8qaSg7wQ+TXmCVeUDoW75whtXcdS9dbHxRoO2OWFH5I9+qbkHBhx5Wj/h1wQpS8usuxGnsZqiBjUpQ==}
     engines: {node: '>=16'}
     peerDependencies:
       '@prisma/client': '>=4.16.1'
     dependencies:
-      '@prisma/client': 5.4.1(prisma@5.4.1)
+      '@prisma/client': 7.10.0(prisma@5.4.1)(typescript@5.2.2)
     dev: true
 
   /@rollup/pluginutils@5.0.2:
