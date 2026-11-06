@@ -47,7 +47,7 @@
     "remark-gfm": "^4.0.0",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.0.0",
-    "tailwindcss": "^3.3.3",
+    "tailwindcss": "^4.0.0",
     "typescript": "5.2.2",
     "undici": "^5.25.4",
     "unified": "^11.0.3",
